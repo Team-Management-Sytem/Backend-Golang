@@ -7,6 +7,7 @@ import (
 	"github.com/Caknoooo/go-gin-clean-starter/command"
 	"github.com/Caknoooo/go-gin-clean-starter/config"
 	"github.com/Caknoooo/go-gin-clean-starter/controller"
+	"github.com/Caknoooo/go-gin-clean-starter/entity"
 	"github.com/Caknoooo/go-gin-clean-starter/middleware"
 	"github.com/Caknoooo/go-gin-clean-starter/repository"
 	"github.com/Caknoooo/go-gin-clean-starter/routes"
@@ -24,6 +25,11 @@ func main() {
 		if !flag {
 			return
 		}
+	}
+
+	err := db.AutoMigrate(&entity.User{})
+	if err != nil {
+		log.Fatalf("Failed to migrate database: %v", err)
 	}
 
 	var (
