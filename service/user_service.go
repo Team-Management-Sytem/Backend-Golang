@@ -82,15 +82,15 @@ func (s *userService) Register(ctx context.Context, req dto.UserCreateRequest) (
 		return dto.UserResponse{}, dto.ErrCreateUser
 	}
 
-	draftEmail, err := makeVerificationEmail(userReg.Email)
-	if err != nil {
-		return dto.UserResponse{}, err
-	}
+	// draftEmail, err := makeVerificationEmail(userReg.Email)
+	// if err != nil {
+	// 	return dto.UserResponse{}, err
+	// }
 
-	err = utils.SendMail(userReg.Email, draftEmail["subject"], draftEmail["body"])
-	if err != nil {
-		return dto.UserResponse{}, err
-	}
+	// err = utils.SendMail(userReg.Email, draftEmail["subject"], draftEmail["body"])
+	// if err != nil {
+	// 	return dto.UserResponse{}, err
+	// }
 
 	return dto.UserResponse{
 		ID:         userReg.ID.String(),
@@ -145,20 +145,20 @@ func makeVerificationEmail(receiverEmail string) (map[string]string, error) {
 }
 
 func (s *userService) SendVerificationEmail(ctx context.Context, req dto.SendVerificationEmailRequest) error {
-	user, err := s.userRepo.GetUserByEmail(ctx, nil, req.Email)
-	if err != nil {
-		return dto.ErrEmailNotFound
-	}
+	// user, err := s.userRepo.GetUserByEmail(ctx, nil, req.Email)
+	// if err != nil {
+	// 	return dto.ErrEmailNotFound
+	// }
 
-	draftEmail, err := makeVerificationEmail(user.Email)
-	if err != nil {
-		return err
-	}
+	// draftEmail, err := makeVerificationEmail(user.Email)
+	// if err != nil {
+	// 	return err
+	// }
 
-	err = utils.SendMail(user.Email, draftEmail["subject"], draftEmail["body"])
-	if err != nil {
-		return err
-	}
+	// err = utils.SendMail(user.Email, draftEmail["subject"], draftEmail["body"])
+	// if err != nil {
+	// 	return err
+	// }
 
 	return nil
 }
@@ -328,9 +328,9 @@ func (s *userService) Verify(ctx context.Context, req dto.UserLoginRequest) (dto
 		return dto.UserLoginResponse{}, dto.ErrEmailNotFound
 	}
 
-	if !check.IsVerified {
-		return dto.UserLoginResponse{}, dto.ErrAccountNotVerified
-	}
+	// if !check.IsVerified {
+	// 	return dto.UserLoginResponse{}, dto.ErrAccountNotVerified
+	// }
 
 	checkPassword, err := helpers.CheckPassword(check.Password, []byte(req.Password))
 	if err != nil || !checkPassword {

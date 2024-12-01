@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"log"
 	"math"
 
 	"github.com/Caknoooo/go-gin-clean-starter/dto"
@@ -36,10 +37,13 @@ func (r *userRepository) RegisterUser(ctx context.Context, tx *gorm.DB, user ent
 		tx = r.db
 	}
 
+	log.Printf("Registering user: %+v", user) 
 	if err := tx.WithContext(ctx).Create(&user).Error; err != nil {
+		log.Printf("Failed to register user: %v", err) 
 		return entity.User{}, err
 	}
 
+	log.Printf("User registered successfully: %+v", user)
 	return user, nil
 }
 
@@ -71,12 +75,12 @@ func (r *userRepository) GetAllUserWithPagination(ctx context.Context, tx *gorm.
 	totalPage := int64(math.Ceil(float64(count) / float64(req.PerPage)))
 
 	return dto.GetAllUserRepositoryResponse{
-		Users:     users,
+		Users: users,
 		PaginationResponse: dto.PaginationResponse{
-			Page: 		 req.Page,
-			PerPage: 	 req.PerPage,
-			Count: 		 count,
-			MaxPage: 	 totalPage,
+			Page:    req.Page,
+			PerPage: req.PerPage,
+			Count:   count,
+			MaxPage: totalPage,
 		},
 	}, err
 }
@@ -101,10 +105,13 @@ func (r *userRepository) GetUserByEmail(ctx context.Context, tx *gorm.DB, email 
 
 	var user entity.User
 	if err := tx.WithContext(ctx).Where("email = ?", email).Take(&user).Error; err != nil {
-		return entity.User{}, err
+		if err == gorm.ErrRecordNotFound {
+			return entity.User{}, nil 
+		}
+		return entity.User{}, err 
 	}
 
-	return user, nil
+	return user, nil 
 }
 
 func (r *userRepository) CheckEmail(ctx context.Context, tx *gorm.DB, email string) (entity.User, bool, error) {
@@ -114,6 +121,9 @@ func (r *userRepository) CheckEmail(ctx context.Context, tx *gorm.DB, email stri
 
 	var user entity.User
 	if err := tx.WithContext(ctx).Where("email = ?", email).Take(&user).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return entity.User{}, false, nil
+		}
 		return entity.User{}, false, err
 	}
 
