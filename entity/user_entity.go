@@ -16,7 +16,7 @@ type User struct {
 	Role       string         `json:"role"`
 	ImageUrl   string         `json:"image_url"`
 	IsVerified bool           `json:"is_verified"`
-	CreatedAt  time.Time      `gorm:"type:datetime" json:"created_at"` // Tipe waktu disesuaikan untuk MySQL
+	CreatedAt  time.Time      `gorm:"type:datetime" json:"created_at"` 
 	UpdatedAt  time.Time      `gorm:"type:datetime" json:"updated_at"`
 	DeletedAt  gorm.DeletedAt `gorm:"type:datetime" json:"deleted_at"`
 }
