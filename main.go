@@ -60,6 +60,6 @@ func main() {
 	}
 
 	if err := server.Run(serve); err != nil {
-		log.Fatalf("error running server: %v", err)
+		log.Fatalf("error running server:%v", err)
 	}
 }
