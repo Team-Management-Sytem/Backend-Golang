@@ -1,0 +1,62 @@
+[
+    {
+        "name": "Development Team",
+        "description": "Responsible for developing new features and maintaining the codebase.",
+        "created_at": 1699008000,
+        "updated_at": 1699008000,
+        "tasks": [
+            {
+                "title": "Implement authentication",
+                "description": "Develop and test user login and registration features.",
+                "status": "In Progress",
+                "due_date": "2023-12-15T23:59:59Z"
+            },
+            {
+                "title": "Bug fixes",
+                "description": "Resolve high-priority bugs from the last sprint.",
+                "status": "Pending",
+                "due_date": "2023-12-20T23:59:59Z"
+            }
+        ]
+    },
+    {
+        "name": "Marketing Team",
+        "description": "Focuses on promoting products and increasing brand awareness.",
+        "created_at": 1699008000,
+        "updated_at": 1699008000,
+        "tasks": [
+            {
+                "title": "Social media campaign",
+                "description": "Launch a campaign on social media platforms for the holiday season.",
+                "status": "Pending",
+                "due_date": "2023-12-10T23:59:59Z"
+            },
+            {
+                "title": "Email marketing",
+                "description": "Send newsletters to subscribers highlighting new products.",
+                "status": "In Progress",
+                "due_date": "2023-12-12T18:00:00Z"
+            }
+        ]
+    },
+    {
+        "name": "Design Team",
+        "description": "Handles UI/UX design and graphic assets for projects.",
+        "created_at": 1699008000,
+        "updated_at": 1699008000,
+        "tasks": [
+            {
+                "title": "Create landing page design",
+                "description": "Design a new landing page layout for the website.",
+                "status": "Completed",
+                "due_date": "2023-11-30T15:00:00Z"
+            },
+            {
+                "title": "Logo redesign",
+                "description": "Redesign the company logo for rebranding.",
+                "status": "Pending",
+                "due_date": "2023-12-25T23:59:59Z"
+            }
+        ]
+    }
+]
