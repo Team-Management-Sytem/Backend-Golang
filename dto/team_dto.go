@@ -2,6 +2,7 @@ package dto
 
 import (
 	"errors"
+	"time"
 
 	"github.com/Caknoooo/go-gin-clean-starter/entity"
 )
@@ -33,14 +34,16 @@ var (
 
 type (
 	TeamCreateRequest struct {
-		Name       	string `json:"name"`
-		Description string `json:"description"`
+		Name        string `json:"name" form:"name" binding:"required"`
+    	Description string `json:"description" form:"description" binding:"required"`
 	}
 
 	TeamResponse struct {
 		ID         	string `json:"id"`
 		Name       	string `json:"name"`
 		Description string `json:"description"`
+		CreatedAt   time.Time `json:"created_at"`
+		UpdatedAt   time.Time `json:"updated_at"`
 	}
 
 	TeamPaginationResponse struct {
@@ -54,13 +57,14 @@ type (
 	}
 
 	TeamUpdateRequest struct {
-		Name       	string `json:"name"`
-		Description string `json:"description"`
+		Name       	string `json:"name" form:"name" binding:"required"`
+		Description string `json:"description" form:"description" binding:"required"`
 	}
 
 	TeamUpdateResponse struct {
 		ID         	string `json:"id"`
 		Name       	string `json:"name"`
 		Description string `json:"description"`
+		UpdatedAt   time.Time `json:"updated_at"`
 	}
 )

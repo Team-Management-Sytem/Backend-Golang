@@ -111,7 +111,8 @@ func (c *taskController) Update(ctx *gin.Context) {
 		return
 	}
 
-	taskId := ctx.MustGet("task_id").(string)
+	taskId := ctx.Param("taskId")
+
 	result, err := c.taskService.Update(ctx.Request.Context(), req, taskId)
 	if err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_TASK, err.Error(), nil)
@@ -123,8 +124,9 @@ func (c *taskController) Update(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+
 func (c *taskController) Delete(ctx *gin.Context) {
-	taskId := ctx.MustGet("task_id").(string)
+	taskId := ctx.Param("taskId")
 
 	if err := c.taskService.Delete(ctx.Request.Context(), taskId); err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_DELETE_TASK, err.Error(), nil)
@@ -135,3 +137,4 @@ func (c *taskController) Delete(ctx *gin.Context) {
 	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_DELETE_TASK, nil)
 	ctx.JSON(http.StatusOK, res)
 }
+

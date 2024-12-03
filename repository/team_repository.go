@@ -55,7 +55,7 @@ func (r *teamRepository) GetAllTeamWithPagination(ctx context.Context, tx *gorm.
 	var count int64
 
 	if req.PerPage == 0 {
-		req.PerPage = 10
+		req.PerPage = 20
 	}
 
 	if req.Page == 0 {

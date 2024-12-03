@@ -34,12 +34,12 @@ var (
 
 type (
 	TaskCreateRequest struct {
-		Title       string `json:"title" binding:"required"`
-		Description string `json:"description" binding:"required"`
-		Status      string `json:"status" binding:"required"` 
-		DueDate     string `json:"due_date" binding:"required"` 
-		TeamsID     int    `json:"teams_id" binding:"required"`
-		UserID      int    `json:"user_id" binding:"required"`
+		Title       string    `json:"title" form:"title" binding:"required"`
+		Description string    `json:"description" form:"description" binding:"required"`
+		Status      string    `json:"status" form:"status" binding:"required"`
+		DueDate     string    `json:"due_date" form:"due_date" binding:"required"`
+		TeamsID     int       `json:"teams_id" form:"teams_id" binding:"required"`
+		UserID      int       `json:"user_id" form:"user_id" binding:"required"`
 	}
 
 	TaskResponse struct {
@@ -65,10 +65,10 @@ type (
 	}
 
 	TaskUpdateRequest struct {
-		Title       string `json:"title" binding:"required"`
-		Description string `json:"description" binding:"required"`
-		Status      string `json:"status" binding:"required"`
-		DueDate     string `json:"due_date" binding:"required"` 
+		Title       string `json:"title" form:"title" binding:"required"`
+		Description string `json:"description" form:"description" binding:"required"`
+		Status      string `json:"status" form:"status" binding:"required"`
+		DueDate     string `json:"due_date" form:"due_date" binding:"required"` 
 	}
 
 	TaskUpdateResponse struct {

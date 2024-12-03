@@ -111,7 +111,8 @@ func (c *teamController) Update(ctx *gin.Context) {
 		return
 	}
 
-	teamId := ctx.MustGet("team_id").(string)
+	teamId := ctx.Param("teamId")
+
 	result, err := c.teamService.Update(ctx.Request.Context(), req, teamId)
 	if err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_TEAM, err.Error(), nil)
@@ -123,8 +124,9 @@ func (c *teamController) Update(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+
 func (c *teamController) Delete(ctx *gin.Context) {
-	teamId := ctx.MustGet("team_id").(string)
+	teamId := ctx.Param("teamId")
 
 	if err := c.teamService.Delete(ctx.Request.Context(), teamId); err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_DELETE_TEAM, err.Error(), nil)
@@ -135,3 +137,4 @@ func (c *teamController) Delete(ctx *gin.Context) {
 	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_DELETE_TEAM, nil)
 	ctx.JSON(http.StatusOK, res)
 }
+
