@@ -27,10 +27,14 @@ func main() {
 		}
 	}
 
-	err := db.AutoMigrate(&entity.User{})
+	err := db.AutoMigrate(&entity.User{},
+		&entity.Team{},
+		&entity.Task{},)
 	if err != nil {
 		log.Fatalf("Failed to migrate database: %v", err)
 	}
+
+	// err := Migrate
 
 	var (
 		jwtService service.JWTService = service.NewJWTService()
