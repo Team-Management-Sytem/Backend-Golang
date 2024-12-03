@@ -12,7 +12,6 @@ import (
 	"github.com/Caknoooo/go-gin-clean-starter/repository"
 	"github.com/Caknoooo/go-gin-clean-starter/routes"
 	"github.com/Caknoooo/go-gin-clean-starter/service"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,9 +26,7 @@ func main() {
 		}
 	}
 
-	err := db.AutoMigrate(&entity.User{},
-		&entity.Team{},
-		&entity.Task{},)
+	err := db.AutoMigrate(&entity.User{}, &entity.Team{}, &entity.UserTeams{}, &entity.Task{})
 	if err != nil {
 		log.Fatalf("Failed to migrate database: %v", err)
 	}
@@ -39,19 +36,22 @@ func main() {
 
 		// Implementation Dependency Injection
 		// Repository
-		userRepository repository.UserRepository = repository.NewUserRepository(db)
-		teamRepository repository.TeamRepository = repository.NewTeamRepository(db)
-		taskRepository repository.TaskRepository = repository.NewTaskRepository(db)
+		userRepository     repository.UserRepository     = repository.NewUserRepository(db)
+		teamRepository     repository.TeamRepository     = repository.NewTeamRepository(db)
+		userTeamsRepository repository.UserTeamsRepository = repository.NewUserTeamsRepository(db)
+		taskRepository     repository.TaskRepository     = repository.NewTaskRepository(db)
 
-		// Service
-		userService service.UserService = service.NewUserService(userRepository, jwtService)
-		teamService service.TeamService = service.NewTeamService(teamRepository)
-		taskService service.TaskService = service.NewTaskService(taskRepository)
+		// Services
+		userService     service.UserService     = service.NewUserService(userRepository, jwtService)
+		teamService     service.TeamService     = service.NewTeamService(teamRepository)
+		userTeamsService service.UserTeamsService = service.NewUserTeamsService(userTeamsRepository)
+		taskService     service.TaskService     = service.NewTaskService(taskRepository)
 
-		// Controller
-		userController controller.UserController = controller.NewUserController(userService)
-		teamController controller.TeamController = controller.NewTeamController(teamService)
-		taskController controller.TaskController = controller.NewTaskController(taskService)
+		// Controllers
+		userController     controller.UserController     = controller.NewUserController(userService)
+		teamController     controller.TeamController     = controller.NewTeamController(teamService)
+		userTeamsController *controller.UserTeamsController = controller.NewUserTeamsController(userTeamsService) 
+		taskController     controller.TaskController     = controller.NewTaskController(taskService)
 	)
 
 	server := gin.Default()
@@ -60,6 +60,7 @@ func main() {
 	// routes
 	routes.User(server, userController, jwtService)
 	routes.Team(server, teamController)
+	routes.UserTeams(server, userTeamsController) 
 	routes.Task(server, taskController)
 
 	server.Static("/assets", "./assets")
