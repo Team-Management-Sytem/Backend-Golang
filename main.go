@@ -34,8 +34,6 @@ func main() {
 		log.Fatalf("Failed to migrate database: %v", err)
 	}
 
-	// err := Migrate
-
 	var (
 		jwtService service.JWTService = service.NewJWTService()
 
