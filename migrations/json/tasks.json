@@ -1,0 +1,26 @@
+[
+    {
+        "title": "Complete project documentation",
+        "description": "Finalize the project documentation for submission.",
+        "status": "Pending",
+        "due_date": "2023-12-10T23:59:59Z",
+        "teams_id": 1,
+        "user_id": 101
+    },
+    {
+        "title": "Prepare presentation",
+        "description": "Prepare slides for the final project presentation.",
+        "status": "In Progress",
+        "due_date": "2023-12-08T18:00:00Z",
+        "teams_id": 2,
+        "user_id": 102
+    },
+    {
+        "title": "Code review",
+        "description": "Conduct a code review for the new feature branch.",
+        "status": "Completed",
+        "due_date": "2023-11-25T15:00:00Z",
+        "teams_id": 1,
+        "user_id": 103
+    }
+]

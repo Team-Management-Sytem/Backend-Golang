@@ -38,12 +38,18 @@ func main() {
 		// Implementation Dependency Injection
 		// Repository
 		userRepository repository.UserRepository = repository.NewUserRepository(db)
+		teamRepository repository.TeamRepository = repository.NewTeamRepository(db)
+		taskRepository repository.TaskRepository = repository.NewTaskRepository(db)
 
 		// Service
 		userService service.UserService = service.NewUserService(userRepository, jwtService)
+		teamService service.TeamService = service.NewTeamService(teamRepository)
+		taskService service.TaskService = service.NewTaskService(taskRepository)
 
 		// Controller
 		userController controller.UserController = controller.NewUserController(userService)
+		teamController controller.TeamController = controller.NewTeamController(teamService)
+		taskController controller.TaskController = controller.NewTaskController(taskService)
 	)
 
 	server := gin.Default()
@@ -51,6 +57,8 @@ func main() {
 
 	// routes
 	routes.User(server, userController, jwtService)
+	routes.Team(server, teamController)
+	routes.Task(server, taskController)
 
 	server.Static("/assets", "./assets")
 	port := os.Getenv("PORT")
