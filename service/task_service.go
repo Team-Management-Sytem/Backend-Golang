@@ -2,11 +2,13 @@ package service
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/Caknoooo/go-gin-clean-starter/dto"
 	"github.com/Caknoooo/go-gin-clean-starter/entity"
 	"github.com/Caknoooo/go-gin-clean-starter/repository"
+	"github.com/google/uuid"
 )
 
 type (
@@ -16,6 +18,8 @@ type (
 		GetTaskById(ctx context.Context, taskId string) (dto.TaskResponse, error)
 		Update(ctx context.Context, req dto.TaskUpdateRequest, taskId string) (dto.TaskUpdateResponse, error)
 		Delete(ctx context.Context, taskId string) error
+		AssignUserToTask(ctx context.Context, taskId string, userID *uuid.UUID) error
+		RemoveUserFromTask(ctx context.Context, taskId string) error
 	}
 
 	taskService struct {
@@ -41,7 +45,10 @@ func (s *taskService) Register(ctx context.Context, req dto.TaskCreateRequest) (
 		Status:      req.Status,
 		DueDate:     dueDate,
 		TeamsID:     req.TeamsID,
-		UserID:      req.UserID,
+	}
+
+	if req.UserID != nil { 
+		task.UserID = req.UserID
 	}
 
 	taskReg, err := s.taskRepo.RegisterTask(ctx, nil, task)
@@ -55,6 +62,7 @@ func (s *taskService) Register(ctx context.Context, req dto.TaskCreateRequest) (
 		Description: taskReg.Description,
 		Status:      taskReg.Status,
 		DueDate:     taskReg.DueDate,
+		UserID:      taskReg.UserID,
 	}, nil
 }
 
@@ -72,6 +80,7 @@ func (s *taskService) GetAllTaskWithPagination(ctx context.Context, req dto.Pagi
 			Description: task.Description,
 			Status:      task.Status,
 			DueDate:     task.DueDate,
+			UserID:      task.UserID,
 		})
 	}
 
@@ -87,18 +96,22 @@ func (s *taskService) GetAllTaskWithPagination(ctx context.Context, req dto.Pagi
 }
 
 func (s *taskService) GetTaskById(ctx context.Context, taskId string) (dto.TaskResponse, error) {
-	task, err := s.taskRepo.GetTaskById(ctx, nil, taskId)
-	if err != nil {
-		return dto.TaskResponse{}, dto.ErrGetTaskById
-	}
+    task, err := s.taskRepo.GetTaskById(ctx, nil, taskId)
+    if err != nil {
+        return dto.TaskResponse{}, dto.ErrGetTaskById
+    }
 
-	return dto.TaskResponse{
-		ID:          task.ID,
-		Title:       task.Title,
-		Description: task.Description,
-		Status:      task.Status,
-		DueDate:     task.DueDate,
-	}, nil
+    return dto.TaskResponse{
+        ID:          task.ID,
+        Title:       task.Title,
+        Description: task.Description,
+        Status:      task.Status,
+        DueDate:     task.DueDate,
+        TeamsID:     task.TeamsID,
+        UserID:      task.UserID,
+        CreatedAt:   task.CreatedAt,
+        UpdatedAt:   task.UpdatedAt,
+    }, nil
 }
 
 func (s *taskService) Update(ctx context.Context, req dto.TaskUpdateRequest, taskId string) (dto.TaskUpdateResponse, error) {
@@ -120,6 +133,10 @@ func (s *taskService) Update(ctx context.Context, req dto.TaskUpdateRequest, tas
 		DueDate:     dueDate,
 	}
 
+	if req.UserID != nil {
+		data.UserID = req.UserID
+	}
+
 	taskUpdate, err := s.taskRepo.UpdateTask(ctx, nil, data)
 	if err != nil {
 		return dto.TaskUpdateResponse{}, dto.ErrUpdateTask
@@ -131,6 +148,7 @@ func (s *taskService) Update(ctx context.Context, req dto.TaskUpdateRequest, tas
 		Description: taskUpdate.Description,
 		Status:      taskUpdate.Status,
 		DueDate:     taskUpdate.DueDate,
+		UserID:      taskUpdate.UserID,
 	}, nil
 }
 
@@ -145,5 +163,31 @@ func (s *taskService) Delete(ctx context.Context, taskId string) error {
 		return dto.ErrDeleteTask
 	}
 
+	return nil
+}
+
+func (s *taskService) AssignUserToTask(ctx context.Context, taskId string, userID *uuid.UUID) error {
+    task, err := s.taskRepo.GetTaskById(ctx, nil, taskId)
+    if err != nil {
+        return dto.ErrTaskNotFound
+    }
+
+    if task.UserID != nil {
+        return errors.New("task already assigned to another user")
+    }
+
+    err = s.taskRepo.AssignUserToTask(ctx, nil, taskId, userID)
+    if err != nil {
+        return dto.ErrAssignUser
+    }
+
+    return nil
+}
+
+func (s *taskService) RemoveUserFromTask(ctx context.Context, taskId string) error {
+	err := s.taskRepo.RemoveUserFromTask(ctx, nil, taskId)
+	if err != nil {
+		return dto.ErrUpdateTask
+	}
 	return nil
 }

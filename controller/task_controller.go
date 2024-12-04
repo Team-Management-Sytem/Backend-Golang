@@ -17,6 +17,8 @@ type (
 		GetTaskById(ctx *gin.Context)
 		Update(ctx *gin.Context)
 		Delete(ctx *gin.Context)
+		AssignUser(ctx *gin.Context)
+		RemoveUser(ctx *gin.Context)
 	}
 
 	taskController struct {
@@ -89,17 +91,17 @@ func (c *taskController) Task(ctx *gin.Context) {
 }
 
 func (c *taskController) GetTaskById(ctx *gin.Context) {
-	taskId := ctx.Param("taskId")
+    taskId := ctx.Param("taskId")
 
-	result, err := c.taskService.GetTaskById(ctx.Request.Context(), taskId)
-	if err != nil {
-		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_TASK, err.Error(), nil)
-		ctx.JSON(http.StatusBadRequest, res)
-		return
-	}
+    result, err := c.taskService.GetTaskById(ctx.Request.Context(), taskId)
+    if err != nil {
+        res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_TASK, err.Error(), nil)
+        ctx.JSON(http.StatusBadRequest, res)
+        return
+    }
 
-	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_TASK, result)
-	ctx.JSON(http.StatusOK, res)
+    res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_TASK, result)
+    ctx.JSON(http.StatusOK, res)
 }
 
 
@@ -124,7 +126,6 @@ func (c *taskController) Update(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
-
 func (c *taskController) Delete(ctx *gin.Context) {
 	taskId := ctx.Param("taskId")
 
@@ -137,4 +138,41 @@ func (c *taskController) Delete(ctx *gin.Context) {
 	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_DELETE_TASK, nil)
 	ctx.JSON(http.StatusOK, res)
 }
+
+func (c *taskController) AssignUser(ctx *gin.Context) {
+    taskId := ctx.Param("taskId")
+    var req dto.AssignUserRequest
+
+    if err := ctx.ShouldBindJSON(&req); err != nil {
+        res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_ASSIGN_USER, err.Error(), nil)
+        ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+        return
+    }
+
+    err := c.taskService.AssignUserToTask(ctx.Request.Context(), taskId, &req.UserID)
+    if err != nil {
+        res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_ASSIGN_USER, err.Error(), nil)
+        ctx.JSON(http.StatusBadRequest, res)
+        return
+    }
+
+    res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_ASSIGN_USER, nil)
+    ctx.JSON(http.StatusOK, res)
+}
+
+
+func (c *taskController) RemoveUser(ctx *gin.Context) {
+    taskId := ctx.Param("taskId")
+
+    err := c.taskService.RemoveUserFromTask(ctx.Request.Context(), taskId)
+    if err != nil {
+        res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_REMOVE_USER, err.Error(), nil)
+        ctx.JSON(http.StatusBadRequest, res)
+        return
+    }
+
+    res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_REMOVE_USER, nil)
+    ctx.JSON(http.StatusOK, res)
+}
+
 
