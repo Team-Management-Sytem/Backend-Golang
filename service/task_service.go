@@ -16,6 +16,7 @@ type (
 		Register(ctx context.Context, req dto.TaskCreateRequest) (dto.TaskResponse, error)
 		GetAllTaskWithPagination(ctx context.Context, req dto.PaginationRequest) (dto.TaskPaginationResponse, error)
 		GetTaskById(ctx context.Context, taskId string) (dto.TaskResponse, error)
+		GetTasksByTeamID(ctx context.Context, teamsID int) ([]dto.TaskResponse, error)
 		Update(ctx context.Context, req dto.TaskUpdateRequest, taskId string) (dto.TaskUpdateResponse, error)
 		Delete(ctx context.Context, taskId string) error
 		AssignUserToTask(ctx context.Context, taskId string, userID *uuid.UUID) error
@@ -112,6 +113,28 @@ func (s *taskService) GetTaskById(ctx context.Context, taskId string) (dto.TaskR
         CreatedAt:   task.CreatedAt,
         UpdatedAt:   task.UpdatedAt,
     }, nil
+}
+
+func (s *taskService) GetTasksByTeamID(ctx context.Context, teamsID int) ([]dto.TaskResponse, error) {
+    tasks, err := s.taskRepo.GetTasksByTeamID(ctx, nil, teamsID)
+    if err != nil {
+        return nil, err
+    }
+
+    var taskResponses []dto.TaskResponse
+    for _, task := range tasks {
+        taskResponses = append(taskResponses, dto.TaskResponse{
+            ID:          task.ID,
+            Title:       task.Title,
+            Description: task.Description,
+            Status:      task.Status,
+            DueDate:     task.DueDate,
+            TeamsID:     task.TeamsID,
+            UserID:      task.UserID, 
+        })
+    }
+
+    return taskResponses, nil
 }
 
 func (s *taskService) Update(ctx context.Context, req dto.TaskUpdateRequest, taskId string) (dto.TaskUpdateResponse, error) {

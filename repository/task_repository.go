@@ -16,6 +16,7 @@ type (
 		RegisterTask(ctx context.Context, tx *gorm.DB, task entity.Task) (entity.Task, error)
 		GetAllTaskWithPagination(ctx context.Context, tx *gorm.DB, req dto.PaginationRequest) (dto.GetAllTaskRepositoryResponse, error)
 		GetTaskById(ctx context.Context, tx *gorm.DB, taskId string) (entity.Task, error)
+		GetTasksByTeamID(ctx context.Context, tx *gorm.DB, teamsID int) ([]entity.Task, error)
 		UpdateTask(ctx context.Context, tx *gorm.DB, task entity.Task) (entity.Task, error)
 		DeleteTask(ctx context.Context, tx *gorm.DB, taskId string) error
 		AssignUserToTask(ctx context.Context, tx *gorm.DB, taskId string, userID *uuid.UUID) error
@@ -99,6 +100,18 @@ func (r *taskRepository) GetTaskById(ctx context.Context, tx *gorm.DB, taskId st
     return task, nil
 }
 
+func (r *taskRepository) GetTasksByTeamID(ctx context.Context, tx *gorm.DB, teamsID int) ([]entity.Task, error) {
+    if tx == nil {
+        tx = r.db
+    }
+
+    var tasks []entity.Task
+    if err := tx.WithContext(ctx).Where("teams_id = ?", teamsID).Find(&tasks).Error; err != nil {
+        return nil, err
+    }
+
+    return tasks, nil
+}
 
 func (r *taskRepository) UpdateTask(ctx context.Context, tx *gorm.DB, task entity.Task) (entity.Task, error) {
 	if tx == nil {

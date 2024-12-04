@@ -13,7 +13,7 @@ func Task(route *gin.Engine, taskController controller.TaskController) {
 		routes.GET("/:taskId", taskController.GetTaskById)
 		routes.PATCH("/:taskId", taskController.Update)
 		routes.DELETE("/:taskId", taskController.Delete)
-
+        routes.GET("/team/:teamId", taskController.GetTasksByTeamID)
 		routes.POST("/:taskId/assign", taskController.AssignUser)
 		routes.POST("/:taskId/remove", taskController.RemoveUser)
 	}
