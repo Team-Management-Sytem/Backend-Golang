@@ -21,16 +21,19 @@ type (
 		Delete(ctx context.Context, taskId string) error
 		AssignUserToTask(ctx context.Context, taskId string, userID *uuid.UUID) error
 		RemoveUserFromTask(ctx context.Context, taskId string) error
+		GetAssignedUser(ctx context.Context, taskId string) (dto.UserResponse, error)
 	}
 
 	taskService struct {
 		taskRepo repository.TaskRepository
+		userRepo repository.UserRepository
 	}
 )
 
-func NewTaskService(taskRepo repository.TaskRepository) TaskService {
+func NewTaskService(taskRepo repository.TaskRepository, userRepo repository.UserRepository) TaskService {
 	return &taskService{
 		taskRepo: taskRepo,
+		userRepo: userRepo,
 	}
 }
 
@@ -213,4 +216,32 @@ func (s *taskService) RemoveUserFromTask(ctx context.Context, taskId string) err
 		return dto.ErrUpdateTask
 	}
 	return nil
+}
+
+func (s *taskService) GetAssignedUser(ctx context.Context, taskId string) (dto.UserResponse, error) {
+    task, err := s.taskRepo.GetTaskById(ctx, nil, taskId)
+    if err != nil {
+        return dto.UserResponse{}, err 
+    }
+
+    if task.UserID != nil {
+        user, err := s.userRepo.GetUserById(ctx, nil, task.UserID.String())
+        if err != nil {
+            return dto.UserResponse{}, err
+        }
+
+        userResponse := dto.UserResponse{
+            ID:         user.ID.String(),
+            Name:       user.Name,
+            Email:      user.Email,
+            TelpNumber: user.TelpNumber,
+            Role:       user.Role,
+            ImageUrl:   user.ImageUrl,
+            IsVerified: user.IsVerified,
+        }
+
+        return userResponse, nil 
+    }
+
+    return dto.UserResponse{}, errors.New("no user assigned to this task")
 }

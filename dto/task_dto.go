@@ -57,6 +57,7 @@ type (
 		DueDate     time.Time `json:"due_date"`
 		TeamsID     int       `json:"teams_id"`
 		UserID      *uuid.UUID `json:"user_id,omitempty"`
+		User        UserResponse `json:"user,omitempty"`
 		CreatedAt   time.Time `json:"created_at"`
 		UpdatedAt   time.Time `json:"updated_at"`
 	}
