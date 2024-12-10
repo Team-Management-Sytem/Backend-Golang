@@ -45,7 +45,7 @@ func main() {
 		userService     service.UserService     = service.NewUserService(userRepository, jwtService)
 		teamService     service.TeamService     = service.NewTeamService(teamRepository)
 		userTeamsService service.UserTeamsService = service.NewUserTeamsService(userTeamsRepository)
-		taskService     service.TaskService     = service.NewTaskService(taskRepository)
+		taskService     service.TaskService     = service.NewTaskService(taskRepository, userRepository)
 
 		// Controllers
 		userController     controller.UserController     = controller.NewUserController(userService)

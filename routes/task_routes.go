@@ -16,6 +16,7 @@ func Task(route *gin.Engine, taskController controller.TaskController) {
         routes.GET("/team/:teamId", taskController.GetTasksByTeamID)
 		routes.POST("/:taskId/assign", taskController.AssignUser)
 		routes.POST("/:taskId/remove", taskController.RemoveUser)
+		routes.GET("/:taskId/user", taskController.GetAssignedUser)
 	}
 }
 

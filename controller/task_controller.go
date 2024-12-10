@@ -21,6 +21,7 @@ type (
 		Delete(ctx *gin.Context)
 		AssignUser(ctx *gin.Context)
 		RemoveUser(ctx *gin.Context)
+		GetAssignedUser(ctx *gin.Context)
 	}
 
 	taskController struct {
@@ -196,4 +197,16 @@ func (c *taskController) RemoveUser(ctx *gin.Context) {
     ctx.JSON(http.StatusOK, res)
 }
 
+func (c *taskController) GetAssignedUser(ctx *gin.Context) {
+	taskId := ctx.Param("taskId")
 
+	result, err := c.taskService.GetAssignedUser(ctx.Request.Context(), taskId)
+	if err != nil {
+		res := utils.BuildResponseFailed("Failed to get assigned user", err.Error(), nil)
+		ctx.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	res := utils.BuildResponseSuccess("Successfully fetched task and assigned user", result)
+	ctx.JSON(http.StatusOK, res)
+}
