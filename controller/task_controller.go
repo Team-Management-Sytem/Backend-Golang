@@ -22,6 +22,7 @@ type (
 		AssignUser(ctx *gin.Context)
 		RemoveUser(ctx *gin.Context)
 		GetAssignedUser(ctx *gin.Context)
+		GetTasksByUserID(ctx *gin.Context)
 	}
 
 	taskController struct {
@@ -109,7 +110,7 @@ func (c *taskController) GetTaskById(ctx *gin.Context) {
 
 func (c *taskController) GetTasksByTeamID(ctx *gin.Context) {
     teamID := ctx.Param("teamId")
-    teamIDInt, err := strconv.Atoi(teamID) 
+    teamIDInt, err := strconv.Atoi(teamID)
     if err != nil {
         res := utils.BuildResponseFailed("Invalid team ID", err.Error(), nil)
         ctx.JSON(http.StatusBadRequest, res)
@@ -123,9 +124,10 @@ func (c *taskController) GetTasksByTeamID(ctx *gin.Context) {
         return
     }
 
-    res := utils.BuildResponseSuccess("Successfully fetched tasks", tasks)
+    res := utils.BuildResponseSuccess("Successfully fetched tasks with user details", tasks)
     ctx.JSON(http.StatusOK, res)
 }
+
 
 func (c *taskController) Update(ctx *gin.Context) {
 	var req dto.TaskUpdateRequest
@@ -210,3 +212,18 @@ func (c *taskController) GetAssignedUser(ctx *gin.Context) {
 	res := utils.BuildResponseSuccess("Successfully fetched task and assigned user", result)
 	ctx.JSON(http.StatusOK, res)
 }
+
+func (c *taskController) GetTasksByUserID(ctx *gin.Context) {
+    userID := ctx.Param("userId") 
+
+    tasks, err := c.taskService.GetTasksByUserID(ctx.Request.Context(), userID) 
+    if err != nil {
+        res := utils.BuildResponseFailed("Failed to get tasks", err.Error(), nil)
+        ctx.JSON(http.StatusInternalServerError, res)
+        return
+    }
+
+    res := utils.BuildResponseSuccess("Successfully fetched tasks assigned to user", tasks)
+    ctx.JSON(http.StatusOK, res)
+}
+
