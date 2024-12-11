@@ -21,6 +21,7 @@ type (
 		DeleteTask(ctx context.Context, tx *gorm.DB, taskId string) error
 		AssignUserToTask(ctx context.Context, tx *gorm.DB, taskId string, userID *uuid.UUID) error
 		RemoveUserFromTask(ctx context.Context, tx *gorm.DB, taskId string) error
+		GetTasksByUserID(ctx context.Context, userID string) ([]entity.Task, error)
 	}
 
 	taskRepository struct {
@@ -88,29 +89,29 @@ func (r *taskRepository) GetAllTaskWithPagination(ctx context.Context, tx *gorm.
 }
 
 func (r *taskRepository) GetTaskById(ctx context.Context, tx *gorm.DB, taskId string) (entity.Task, error) {
-    if tx == nil {
-        tx = r.db
-    }
+	if tx == nil {
+		tx = r.db
+	}
 
-    var task entity.Task
-    if err := tx.WithContext(ctx).Where("id = ?", taskId).Take(&task).Error; err != nil {
-        return entity.Task{}, err
-    }
+	var task entity.Task
+	if err := tx.WithContext(ctx).Where("id = ?", taskId).Take(&task).Error; err != nil {
+		return entity.Task{}, err
+	}
 
-    return task, nil
+	return task, nil
 }
 
 func (r *taskRepository) GetTasksByTeamID(ctx context.Context, tx *gorm.DB, teamsID int) ([]entity.Task, error) {
-    if tx == nil {
-        tx = r.db
-    }
+	if tx == nil {
+		tx = r.db
+	}
 
-    var tasks []entity.Task
-    if err := tx.WithContext(ctx).Where("teams_id = ?", teamsID).Find(&tasks).Error; err != nil {
-        return nil, err
-    }
+	var tasks []entity.Task
+	if err := tx.WithContext(ctx).Where("teams_id = ?", teamsID).Find(&tasks).Error; err != nil {
+		return nil, err
+	}
 
-    return tasks, nil
+	return tasks, nil
 }
 
 func (r *taskRepository) UpdateTask(ctx context.Context, tx *gorm.DB, task entity.Task) (entity.Task, error) {
@@ -138,18 +139,17 @@ func (r *taskRepository) DeleteTask(ctx context.Context, tx *gorm.DB, taskId str
 }
 
 func (r *taskRepository) AssignUserToTask(ctx context.Context, tx *gorm.DB, taskId string, userID *uuid.UUID) error {
-    if tx == nil {
-        tx = r.db
-    }
+	if tx == nil {
+		tx = r.db
+	}
 
-    err := tx.WithContext(ctx).Model(&entity.Task{}).Where("id = ?", taskId).Update("user_id", userID).Error
-    if err != nil {
-        return err
-    }
+	err := tx.WithContext(ctx).Model(&entity.Task{}).Where("id = ?", taskId).Update("user_id", userID).Error
+	if err != nil {
+		return err
+	}
 
-    return nil
+	return nil
 }
-
 
 func (r *taskRepository) RemoveUserFromTask(ctx context.Context, tx *gorm.DB, taskId string) error {
 	if tx == nil {
@@ -162,4 +162,12 @@ func (r *taskRepository) RemoveUserFromTask(ctx context.Context, tx *gorm.DB, ta
 	}
 
 	return nil
+}
+
+func (r *taskRepository) GetTasksByUserID(ctx context.Context, userID string) ([]entity.Task, error) {
+    var tasks []entity.Task
+    if err := r.db.WithContext(ctx).Where("user_id = ?", userID).Find(&tasks).Error; err != nil {
+        return nil, err
+    }
+    return tasks, nil
 }
